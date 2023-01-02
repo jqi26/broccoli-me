@@ -2,16 +2,31 @@ package com.example.broccolime
 
 import android.app.AlertDialog
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
-import org.w3c.dom.Text
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.Call
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONException
+import org.json.JSONObject
+
 
 class MainFragment : Fragment() {
     override fun onCreateView(
@@ -26,6 +41,17 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         view.findViewById<Button>(R.id.inviteButton).setOnClickListener { setUpButton() }
+    }
+
+    fun setDialogLoading(isLoading: Boolean, progressBar: ProgressBar, dialog: AlertDialog,
+                         nameBox: EditText, emailBox: EditText, confirmEmailBox: EditText) {
+        progressBar.isGone = !isLoading
+        dialog.setCancelable(!isLoading);
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = !isLoading
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE).isEnabled = !isLoading
+        nameBox.isEnabled = !isLoading
+        emailBox.isEnabled = !isLoading
+        confirmEmailBox.isEnabled = !isLoading
     }
 
     private fun setUpButton() {
@@ -63,7 +89,7 @@ class MainFragment : Fragment() {
         dialog.show()
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-
+            val progressBar: ProgressBar = dialog.findViewById(R.id.progressBar)
 
             // Validate everything again since empty warnings only show on change
             isError = validateName(nameBox.text.toString(), nameError)
@@ -74,7 +100,18 @@ class MainFragment : Fragment() {
             if (isError) {
                 Toast.makeText(context, "Please fix errors above.", Toast.LENGTH_SHORT).show()
             } else {
-                // TODO: Send request
+                setDialogLoading(true, progressBar, dialog, nameBox, emailBox,
+                    confirmEmailBox)
+
+
+                lifecycleScope.launch(Dispatchers.IO) {
+                    sendRequest(nameBox.text.toString().trim(), emailBox.text.toString())
+
+                    withContext(Dispatchers.Main) {
+                        setDialogLoading(false, progressBar, dialog, nameBox, emailBox,
+                            confirmEmailBox)
+                    }
+                }
             }
         }
     }
@@ -143,5 +180,23 @@ class MainFragment : Fragment() {
         }
 
         return isError
+    }
+
+    private fun sendRequest(name: String, email: String) {
+        val client = (activity as MainActivity).client
+
+        val mediaType = "application/json; charset=utf-8".toMediaType()
+        val jsonObject = JSONObject()
+        jsonObject.put("name", name)
+        jsonObject.put("email", email)
+
+        val request: Request = Request.Builder()
+            .url("https://us-central1-blinkapp-684c1.cloudfunctions.net/fakeAuth")
+            .post(jsonObject.toString().toRequestBody(mediaType))
+            .build()
+
+
+        val call: Call = client.newCall(request)
+        val response: Response = call.execute()
     }
 }

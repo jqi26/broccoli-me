@@ -3,7 +3,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="broccoli_and_co"><![CDATA[Broccoli & Co.]]></string>
-    <string name="invite_description">Broccoli Me is the app for getting fresh broccoli shipeed directly to your door step. Ready to get some Vitamin C in your life? Tap the button below to request an invitation to get updates when we have more to share.</string>
+    <string name="invite_description">Broccoli Me is the app for getting fresh broccoli shipped directly to your door step. Ready to get some Vitamin C in your life? Tap the button below to request an invitation to get updates when we have more to share.</string>
     <string name="request_an_invitation">Request an Invitation</string>
     <string name="email">Email</string>
     <string name="confirm_email">Confirm Email</string>

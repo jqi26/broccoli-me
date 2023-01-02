@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Broccoli Me</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="broccoli_and_co"><![CDATA[Broccoli & Co.]]></string>
+    <string name="invite_description">Broccoli Me is the app for getting fresh broccoli shipeed directly to your door step. Ready to get some Vitamin C in your life? Tap the button below to request an invitation to get updates when we have more to share.</string>
+    <string name="request_an_invitation">Request an Invitation</string>
+    <string name="email">Email</string>
+    <string name="confirm_email">Confirm Email</string>
+    <string name="email_icon">Email Icon</string>
+    <string name="name">Name</string>
+    <string name="person_icon">Person Icon</string>
+    <string name="your_details">Your Details</string>
+    <string name="empty_name_warning">Name cannot be empty.</string>
+    <string name="name_min_length_warning">Name must be at least three characters long.</string>
+    <string name="empty_email_warning">Email cannot be empty.</string>
+    <string name="match_emails_warning">Email addresses must match.</string>
+    <string name="valid_email_warning">Email must be a valid email address.</string>
 </resources>

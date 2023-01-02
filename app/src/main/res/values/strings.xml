@@ -16,4 +16,8 @@
     <string name="empty_email_warning">Email cannot be empty.</string>
     <string name="match_emails_warning">Email addresses must match.</string>
     <string name="valid_email_warning">Email must be a valid email address.</string>
+    <string name="unknown_error">An unknown error occurred.</string>
+    <string name="fix_errors_above">Please fix errors above.</string>
+    <string name="request">Request</string>
+    <string name="cancel">Cancel</string>
 </resources>

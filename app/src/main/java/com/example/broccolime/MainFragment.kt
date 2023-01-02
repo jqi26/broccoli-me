@@ -37,8 +37,8 @@ class MainFragment : Fragment() {
         view.findViewById<Button>(R.id.inviteButton).setOnClickListener { setUpButton() }
     }
 
-    fun setDialogLoading(isLoading: Boolean, progressBar: ProgressBar, dialog: AlertDialog,
-                         nameBox: EditText, emailBox: EditText, confirmEmailBox: EditText) {
+    private fun setDialogLoading(isLoading: Boolean, progressBar: ProgressBar, dialog: AlertDialog,
+                                 nameBox: EditText, emailBox: EditText, confirmEmailBox: EditText) {
         progressBar.isGone = !isLoading
         dialog.setCancelable(!isLoading);
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = !isLoading
@@ -50,7 +50,7 @@ class MainFragment : Fragment() {
 
     private fun setUpButton() {
         val builder = AlertDialog.Builder(context).
-                setPositiveButton("Request", null)
+                setPositiveButton(getString(R.string.request), null)
 
         val form = layoutInflater.inflate(R.layout.dialog_details, null, false)
         builder.setView(form)
@@ -62,8 +62,6 @@ class MainFragment : Fragment() {
         val emailError: TextView = form.findViewById(R.id.detailsEmailErrorText)
         val confirmEmailError: TextView = form.findViewById(R.id.detailsConfirmEmailErrorText)
         val serverError: TextView = form.findViewById(R.id.serverErrorText)
-
-        var isError: Boolean
 
         nameBox.doOnTextChanged { text, _, _, _ ->
             validateName(text.toString(), nameError)
@@ -78,50 +76,58 @@ class MainFragment : Fragment() {
                 confirmEmailError)
         }
 
-        builder.setNegativeButton("Cancel") { _, _ -> }
+        builder.setNegativeButton(getString(R.string.cancel)) { _, _ -> }
 
         val dialog = builder.create()
         dialog.show()
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             val progressBar: ProgressBar = dialog.findViewById(R.id.progressBar)
+            handleRequestSubmission(dialog, nameBox, emailBox, confirmEmailBox, nameError,
+                emailError, confirmEmailError, serverError, progressBar)
+        }
+    }
 
-            // Validate everything again since empty warnings only show on change
-            isError = validateName(nameBox.text.toString(), nameError) ||
-                    validateEmail(emailBox.text.toString(), emailError) ||
-                    validateConfirmEmail(confirmEmailBox.text.toString(),
-                        emailBox.text.toString(), confirmEmailError)
+    private fun handleRequestSubmission(dialog: AlertDialog,
+        nameBox: EditText, emailBox: EditText, confirmEmailBox: EditText,
+        nameError: TextView, emailError: TextView, confirmEmailError: TextView,
+        serverError: TextView, progressBar: ProgressBar) {
 
-            if (isError) {
-                Toast.makeText(context, "Please fix errors above.", Toast.LENGTH_SHORT).show()
-            } else {
-                setDialogLoading(true, progressBar, dialog, nameBox, emailBox,
-                    confirmEmailBox)
+        // Validate everything again since empty warnings only show on change
+        val nameHasError = validateName(nameBox.text.toString(), nameError)
+        val emailHasError = validateEmail(emailBox.text.toString(), emailError)
+        val confirmEmailHasError = validateConfirmEmail(confirmEmailBox.text.toString(),
+                    emailBox.text.toString(), confirmEmailError)
+
+        if (nameHasError || emailHasError || confirmEmailHasError) {
+            Toast.makeText(context, getString(R.string.fix_errors_above), Toast.LENGTH_SHORT).show()
+        } else {
+            setDialogLoading(true, progressBar, dialog, nameBox, emailBox,
+                confirmEmailBox)
 
 
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val response = sendRequest(nameBox.text.toString().trim(),
-                        emailBox.text.toString())
+            lifecycleScope.launch(Dispatchers.IO) {
+                val response = sendRequest(nameBox.text.toString().trim(),
+                    emailBox.text.toString())
 
-                    withContext(Dispatchers.Main) {
-                        setDialogLoading(false, progressBar, dialog, nameBox, emailBox,
-                            confirmEmailBox)
+                withContext(Dispatchers.Main) {
+                    setDialogLoading(false, progressBar, dialog, nameBox, emailBox,
+                        confirmEmailBox)
 
-                        if (response.code == 200) {
-                            // TODO: Navigate to congratulations screen
-                        } else {
-                            // Assume everything else is an error
-                            var errorMessage = "An unknown error occurred."
+                    if (response.code == 200) {
+                        // TODO: Navigate to congratulations screen
+                    } else {
+                        // Assume everything else is an error
+                        var errorMessage = getString(R.string.unknown_error)
 
-                            response.body?.let {
-                                val gson = Gson()
-                                val map = gson.fromJson(it.string(), Map::class.java)
-                                errorMessage = map["errorMessage"].toString()
-                            }
-
-                            serverError.text = errorMessage
-                            serverError.isGone = false
+                        response.body?.let {
+                            val gson = Gson()
+                            val map = gson.fromJson(it.string(), Map::class.java)
+                            errorMessage = map["errorMessage"].toString()
                         }
+
+                        serverError.text = errorMessage
+                        serverError.isGone = false
                     }
                 }
             }

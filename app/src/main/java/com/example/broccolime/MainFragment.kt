@@ -5,17 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.view.isGone
-import androidx.core.view.isVisible
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,7 +19,6 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
-import org.json.JSONException
 import org.json.JSONObject
 
 
@@ -67,6 +61,7 @@ class MainFragment : Fragment() {
         val nameError: TextView = form.findViewById(R.id.detailsNameErrorText)
         val emailError: TextView = form.findViewById(R.id.detailsEmailErrorText)
         val confirmEmailError: TextView = form.findViewById(R.id.detailsConfirmEmailErrorText)
+        val serverError: TextView = form.findViewById(R.id.serverErrorText)
 
         var isError: Boolean
 
@@ -92,10 +87,10 @@ class MainFragment : Fragment() {
             val progressBar: ProgressBar = dialog.findViewById(R.id.progressBar)
 
             // Validate everything again since empty warnings only show on change
-            isError = validateName(nameBox.text.toString(), nameError)
-            isError = validateEmail(emailBox.text.toString(), emailError)
-            isError = validateConfirmEmail(confirmEmailBox.text.toString(),
-                emailBox.text.toString(), confirmEmailError)
+            isError = validateName(nameBox.text.toString(), nameError) ||
+                    validateEmail(emailBox.text.toString(), emailError) ||
+                    validateConfirmEmail(confirmEmailBox.text.toString(),
+                        emailBox.text.toString(), confirmEmailError)
 
             if (isError) {
                 Toast.makeText(context, "Please fix errors above.", Toast.LENGTH_SHORT).show()
@@ -105,11 +100,28 @@ class MainFragment : Fragment() {
 
 
                 lifecycleScope.launch(Dispatchers.IO) {
-                    sendRequest(nameBox.text.toString().trim(), emailBox.text.toString())
+                    val response = sendRequest(nameBox.text.toString().trim(),
+                        emailBox.text.toString())
 
                     withContext(Dispatchers.Main) {
                         setDialogLoading(false, progressBar, dialog, nameBox, emailBox,
                             confirmEmailBox)
+
+                        if (response.code == 200) {
+                            // TODO: Navigate to congratulations screen
+                        } else {
+                            // Assume everything else is an error
+                            var errorMessage = "An unknown error occurred."
+
+                            response.body?.let {
+                                val gson = Gson()
+                                val map = gson.fromJson(it.string(), Map::class.java)
+                                errorMessage = map["errorMessage"].toString()
+                            }
+
+                            serverError.text = errorMessage
+                            serverError.isGone = false
+                        }
                     }
                 }
             }
@@ -182,7 +194,7 @@ class MainFragment : Fragment() {
         return isError
     }
 
-    private fun sendRequest(name: String, email: String) {
+    private fun sendRequest(name: String, email: String): Response {
         val client = (activity as MainActivity).client
 
         val mediaType = "application/json; charset=utf-8".toMediaType()
@@ -197,6 +209,6 @@ class MainFragment : Fragment() {
 
 
         val call: Call = client.newCall(request)
-        val response: Response = call.execute()
+        return call.execute()
     }
 }

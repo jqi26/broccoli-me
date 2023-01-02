@@ -11,9 +11,12 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
+import org.chromium.net.CronetEngine
 import org.w3c.dom.Text
+import javax.inject.Inject
 
 class MainFragment : Fragment() {
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -74,7 +77,7 @@ class MainFragment : Fragment() {
             if (isError) {
                 Toast.makeText(context, "Please fix errors above.", Toast.LENGTH_SHORT).show()
             } else {
-                // TODO: Send request
+                sendRequest()
             }
         }
     }
@@ -143,5 +146,9 @@ class MainFragment : Fragment() {
         }
 
         return isError
+    }
+
+    private fun sendRequest() {
+        println((activity as MainActivity).cronetEngine)
     }
 }

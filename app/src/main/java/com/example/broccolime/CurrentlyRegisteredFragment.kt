@@ -28,12 +28,11 @@ class CurrentlyRegisteredFragment : Fragment() {
         view.findViewById<Button>(R.id.cancelInvitationButton).setOnClickListener {
             val builder = AlertDialog.Builder(context)
 
-            builder.setTitle("We're sad to see you go!")
-            builder.setMessage("Are you sure you want to cancel your invite? " +
-                    "You can always send another invitation later if you change your mind.")
+            builder.setTitle(getString(R.string.sad_to_go))
+            builder.setMessage(getString(R.string.sure_to_cancel_invite))
 
-            builder.setNegativeButton("Back") { _, _ -> }
-            builder.setPositiveButton("Cancel Invite") { _, _ ->
+            builder.setNegativeButton(getString(R.string.back)) { _, _ -> }
+            builder.setPositiveButton(getString(R.string.cancel_invite)) { _, _ ->
                 val sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
                 with (sharedPref.edit()) {
                     putBoolean(getString(R.string.has_registered), false)

@@ -10,6 +10,7 @@ import android.widget.*
 import androidx.core.view.isGone
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
@@ -26,6 +27,10 @@ import java.net.SocketTimeoutException
 
 
 class MainFragment : Fragment() {
+    private val registerDetailsViewModel: RegisterDetailsViewModel by activityViewModels()
+
+    private lateinit var button: Button
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,7 +42,20 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        view.findViewById<Button>(R.id.inviteButton).setOnClickListener { setUpButton() }
+        button = view.findViewById(R.id.inviteButton)
+
+        button.setOnClickListener {
+            registerDetailsViewModel.isShowingDialog = true
+            setUpButton()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if (registerDetailsViewModel.isShowingDialog) {
+            button.performClick()
+        }
     }
 
     private fun setDialogLoading(isLoading: Boolean, progressBar: ProgressBar, dialog: AlertDialog,
@@ -66,29 +84,45 @@ class MainFragment : Fragment() {
         val confirmEmailError: TextView = form.findViewById(R.id.detailsConfirmEmailErrorText)
         val serverError: TextView = form.findViewById(R.id.serverErrorText)
 
-        var name = ""
-        var email = ""
-        var confirmEmail = ""
+        var name = registerDetailsViewModel.name
+        var email = registerDetailsViewModel.email
+        var confirmEmail = registerDetailsViewModel.confirmEmail
+
+        nameBox.setText(name)
+        emailBox.setText(email)
+        confirmEmailBox.setText(confirmEmail)
+        nameError.text = registerDetailsViewModel.nameError
+        emailError.text = registerDetailsViewModel.emailError
+        confirmEmailError.text = registerDetailsViewModel.confirmEmailError
+        serverError.text = registerDetailsViewModel.serverError
+        serverError.isGone = registerDetailsViewModel.serverError.trim().isEmpty()
 
         nameBox.doOnTextChanged { text, _, _, _ ->
             name = text.toString().trim()
             validateName(name, nameError)
+            registerDetailsViewModel.name = name
         }
 
         emailBox.doOnTextChanged { text, _, _, _ ->
             email = text.toString().trim()
             validateEmail(email, emailError)
+            registerDetailsViewModel.email = email
         }
 
         confirmEmailBox.doOnTextChanged { text, _, _, _ ->
             confirmEmail = text.toString().trim()
             validateConfirmEmail(confirmEmail, email, confirmEmailError)
+            registerDetailsViewModel.confirmEmail = confirmEmail
         }
 
         builder.setNegativeButton(getString(R.string.cancel)) { _, _ -> }
 
         val dialog = builder.create()
         dialog.show()
+
+        dialog.setOnDismissListener {
+            registerDetailsViewModel.reset()
+        }
 
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
             val progressBar: ProgressBar = dialog.findViewById(R.id.progressBar)
@@ -116,7 +150,6 @@ class MainFragment : Fragment() {
         } else {
             setDialogLoading(true, progressBar, dialog, nameBox, emailBox,
                 confirmEmailBox)
-
 
             lifecycleScope.launch(Dispatchers.IO) {
                 val response = sendRequest(name,
@@ -162,6 +195,8 @@ class MainFragment : Fragment() {
             serverError.text = getString(R.string.timeout_error)
             serverError.isGone = false
         }
+
+        registerDetailsViewModel.serverError = serverError.text.toString()
     }
 
     private fun validateName(text: String?, nameError: TextView): Boolean {
@@ -182,6 +217,7 @@ class MainFragment : Fragment() {
             nameError.text = getString(R.string.empty_name_warning)
         }
 
+        registerDetailsViewModel.nameError = nameError.text.toString()
         return isError
     }
 
@@ -203,6 +239,7 @@ class MainFragment : Fragment() {
             emailError.text = getString(R.string.empty_email_warning)
         }
 
+        registerDetailsViewModel.emailError = emailError.text.toString()
         return isError
     }
 
@@ -227,6 +264,7 @@ class MainFragment : Fragment() {
             confirmEmailError.text = getString(R.string.empty_email_warning)
         }
 
+        registerDetailsViewModel.confirmEmailError = confirmEmailError.text.toString()
         return isError
     }
 

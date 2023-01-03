@@ -21,4 +21,8 @@
     <string name="request">Request</string>
     <string name="cancel">Cancel</string>
     <string name="timeout_error">Connection to the server timed out. Please try again.</string>
+    <string name="registered_message"><![CDATA[You have successfully been registered to receive email updates from Broccoli & Co.. You can always unregister if you do not wish to receive emails from us anymore.]]></string>
+    <string name="congratulations">Congratulations!</string>
+    <string name="broccoli_me_ok">OK</string>
+    <string name="registered_background_gif">Registered Background Gif</string>
 </resources>

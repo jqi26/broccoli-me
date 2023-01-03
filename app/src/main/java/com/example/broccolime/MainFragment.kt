@@ -1,6 +1,7 @@
 package com.example.broccolime
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -125,30 +126,41 @@ class MainFragment : Fragment() {
                     setDialogLoading(false, progressBar, dialog, nameBox, emailBox,
                         confirmEmailBox)
 
-                    if (response != null) {
-                        if (response.code == 200) {
-                            dialog.dismiss()
-                            findNavController().navigate(R.id.action_mainFragment_to_registeredFragment)
-                        } else {
-                            // Assume everything else is an error
-                            var errorMessage = getString(R.string.unknown_error)
-
-                            response.body?.let {
-                                val gson = Gson()
-                                val map = gson.fromJson(it.string(), Map::class.java)
-                                errorMessage = map["errorMessage"].toString()
-                            }
-
-                            serverError.text = errorMessage
-                            serverError.isGone = false
-                        }
-                    } else {
-                        // No response, assume timeout.
-                        serverError.text = getString(R.string.timeout_error)
-                        serverError.isGone = false
-                    }
+                    handleRegisterResponse(response, dialog, serverError)
                 }
             }
+        }
+    }
+
+    private fun handleRegisterResponse(response: Response?, dialog: AlertDialog,
+                                       serverError: TextView) {
+        if (response != null) {
+            if (response.code == 200) {
+                val sharedPref = requireActivity().getPreferences(Context.MODE_PRIVATE)
+                with (sharedPref.edit()) {
+                    putBoolean(getString(R.string.has_registered), true)
+                    apply()
+                }
+
+                dialog.dismiss()
+                findNavController().navigate(R.id.action_mainFragment_to_registeredFragment)
+            } else {
+                // Assume everything else is an error
+                var errorMessage = getString(R.string.unknown_error)
+
+                response.body?.let {
+                    val gson = Gson()
+                    val map = gson.fromJson(it.string(), Map::class.java)
+                    errorMessage = map["errorMessage"].toString()
+                }
+
+                serverError.text = errorMessage
+                serverError.isGone = false
+            }
+        } else {
+            // No response, assume timeout.
+            serverError.text = getString(R.string.timeout_error)
+            serverError.isGone = false
         }
     }
 

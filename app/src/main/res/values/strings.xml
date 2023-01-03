@@ -25,4 +25,5 @@
     <string name="congratulations">Congratulations!</string>
     <string name="broccoli_me_ok">OK</string>
     <string name="registered_background_gif">Registered Background Gif</string>
+    <string name="has_registered">HAS_REGISTERED</string>
 </resources>

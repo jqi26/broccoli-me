@@ -20,4 +20,5 @@
     <string name="fix_errors_above">Please fix errors above.</string>
     <string name="request">Request</string>
     <string name="cancel">Cancel</string>
+    <string name="timeout_error">Connection to the server timed out. Please try again.</string>
 </resources>

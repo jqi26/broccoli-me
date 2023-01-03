@@ -21,6 +21,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import org.json.JSONObject
+import java.net.SocketTimeoutException
 
 
 class MainFragment : Fragment() {
@@ -124,19 +125,25 @@ class MainFragment : Fragment() {
                     setDialogLoading(false, progressBar, dialog, nameBox, emailBox,
                         confirmEmailBox)
 
-                    if (response.code == 200) {
-                        // TODO: Navigate to congratulations screen
-                    } else {
-                        // Assume everything else is an error
-                        var errorMessage = getString(R.string.unknown_error)
+                    if (response != null) {
+                        if (response.code == 200) {
+                            findNavController().navigate(R.id.action_mainFragment_to_registeredFragment)
+                        } else {
+                            // Assume everything else is an error
+                            var errorMessage = getString(R.string.unknown_error)
 
-                        response.body?.let {
-                            val gson = Gson()
-                            val map = gson.fromJson(it.string(), Map::class.java)
-                            errorMessage = map["errorMessage"].toString()
+                            response.body?.let {
+                                val gson = Gson()
+                                val map = gson.fromJson(it.string(), Map::class.java)
+                                errorMessage = map["errorMessage"].toString()
+                            }
+
+                            serverError.text = errorMessage
+                            serverError.isGone = false
                         }
-
-                        serverError.text = errorMessage
+                    } else {
+                        // No response, assume timeout.
+                        serverError.text = getString(R.string.timeout_error)
                         serverError.isGone = false
                     }
                 }
@@ -210,7 +217,7 @@ class MainFragment : Fragment() {
         return isError
     }
 
-    private fun sendRequest(name: String, email: String): Response {
+    private fun sendRequest(name: String, email: String): Response? {
         val client = (activity as MainActivity).client
 
         val mediaType = "application/json; charset=utf-8".toMediaType()
@@ -223,8 +230,13 @@ class MainFragment : Fragment() {
             .post(jsonObject.toString().toRequestBody(mediaType))
             .build()
 
-
         val call: Call = client.newCall(request)
-        return call.execute()
+        val response = try {
+            call.execute()
+        } catch (e: SocketTimeoutException) {
+            null
+        }
+
+        return response
     }
 }

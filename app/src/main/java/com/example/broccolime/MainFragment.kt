@@ -10,6 +10,7 @@ import androidx.core.view.isGone
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,17 +64,23 @@ class MainFragment : Fragment() {
         val confirmEmailError: TextView = form.findViewById(R.id.detailsConfirmEmailErrorText)
         val serverError: TextView = form.findViewById(R.id.serverErrorText)
 
+        var name = ""
+        var email = ""
+        var confirmEmail = ""
+
         nameBox.doOnTextChanged { text, _, _, _ ->
-            validateName(text.toString(), nameError)
+            name = text.toString().trim()
+            validateName(name, nameError)
         }
 
         emailBox.doOnTextChanged { text, _, _, _ ->
-            validateEmail(text.toString(), emailError)
+            email = text.toString().trim()
+            validateEmail(email, emailError)
         }
 
         confirmEmailBox.doOnTextChanged { text, _, _, _ ->
-            validateConfirmEmail(text.toString(), emailBox.text.toString(),
-                confirmEmailError)
+            confirmEmail = text.toString().trim()
+            validateConfirmEmail(confirmEmail, email, confirmEmailError)
         }
 
         builder.setNegativeButton(getString(R.string.cancel)) { _, _ -> }
@@ -93,11 +100,14 @@ class MainFragment : Fragment() {
         nameError: TextView, emailError: TextView, confirmEmailError: TextView,
         serverError: TextView, progressBar: ProgressBar) {
 
+        val name = nameBox.text.toString().trim()
+        val email = emailBox.text.toString().trim()
+        val confirmEmail = confirmEmailBox.text.toString().trim()
+
         // Validate everything again since empty warnings only show on change
-        val nameHasError = validateName(nameBox.text.toString(), nameError)
-        val emailHasError = validateEmail(emailBox.text.toString(), emailError)
-        val confirmEmailHasError = validateConfirmEmail(confirmEmailBox.text.toString(),
-                    emailBox.text.toString(), confirmEmailError)
+        val nameHasError = validateName(name, nameError)
+        val emailHasError = validateEmail(email, emailError)
+        val confirmEmailHasError = validateConfirmEmail(confirmEmail, email, confirmEmailError)
 
         if (nameHasError || emailHasError || confirmEmailHasError) {
             Toast.makeText(context, getString(R.string.fix_errors_above), Toast.LENGTH_SHORT).show()
@@ -107,8 +117,8 @@ class MainFragment : Fragment() {
 
 
             lifecycleScope.launch(Dispatchers.IO) {
-                val response = sendRequest(nameBox.text.toString().trim(),
-                    emailBox.text.toString())
+                val response = sendRequest(name,
+                    email)
 
                 withContext(Dispatchers.Main) {
                     setDialogLoading(false, progressBar, dialog, nameBox, emailBox,

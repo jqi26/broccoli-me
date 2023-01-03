@@ -17,10 +17,47 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <action
+            android:id="@+id/action_mainFragment_to_currentlyRegisteredFragment"
+            app:destination="@id/currentlyRegisteredFragment" />
     </fragment>
     <fragment
         android:id="@+id/registeredFragment"
         android:name="com.example.broccolime.RegisteredFragment"
         android:label="fragment_registered"
-        tools:layout="@layout/fragment_registered" />
+        tools:layout="@layout/fragment_registered" >
+        <action
+            android:id="@+id/action_registeredFragment_to_currentlyRegisteredFragment"
+            app:destination="@id/currentlyRegisteredFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/currentlyRegisteredFragment"
+        android:name="com.example.broccolime.CurrentlyRegisteredFragment"
+        android:label="fragment_currently_registered"
+        tools:layout="@layout/fragment_currently_registered" >
+        <action
+            android:id="@+id/action_currentlyRegisteredFragment_to_cancelledFragment"
+            app:destination="@id/cancelledFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
+    <fragment
+        android:id="@+id/cancelledFragment"
+        android:name="com.example.broccolime.CancelledFragment"
+        android:label="fragment_cancelled"
+        tools:layout="@layout/fragment_cancelled" >
+        <action
+            android:id="@+id/action_cancelledFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+    </fragment>
 </navigation>

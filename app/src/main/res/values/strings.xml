@@ -26,4 +26,8 @@
     <string name="broccoli_me_ok">OK</string>
     <string name="registered_background_gif">Registered Background Gif</string>
     <string name="has_registered">HAS_REGISTERED</string>
+    <string name="cancel_invitation_message">You have already sent an invite to receive email updates from us. If you do want want to receive emails, tap the button below to cancel your invitation.</string>
+    <string name="cancel_invite">Cancel Invite</string>
+    <string name="cancelled_message">Your invitation has successfully been cancelled, but you can send another invite at any time. Tap the button below to go back to the home screen.</string>
+    <string name="successfully_cancelled">Successfully Cancelled</string>
 </resources>

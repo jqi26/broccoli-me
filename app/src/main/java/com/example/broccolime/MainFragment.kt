@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.Call
+import okhttp3.MediaType.Companion.get
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -42,17 +43,18 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if (requireActivity().getPreferences(Context.MODE_PRIVATE).getBoolean(getString(R.string.has_registered), false)) {
+            findNavController().navigate(R.id.action_mainFragment_to_currentlyRegisteredFragment)
+        }
+
         button = view.findViewById(R.id.inviteButton)
 
         button.setOnClickListener {
             registerDetailsViewModel.isShowingDialog = true
             setUpButton()
         }
-    }
 
-    override fun onResume() {
-        super.onResume()
-
+        // Re-open the dialog for a configuration change
         if (registerDetailsViewModel.isShowingDialog) {
             button.performClick()
         }

@@ -9,5 +9,14 @@
         android:id="@+id/mainFragment"
         android:name="com.example.broccolime.MainFragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_registeredFragment"
+            app:destination="@id/registeredFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registeredFragment"
+        android:name="com.example.broccolime.RegisteredFragment"
+        android:label="fragment_registered"
+        tools:layout="@layout/fragment_registered" />
 </navigation>

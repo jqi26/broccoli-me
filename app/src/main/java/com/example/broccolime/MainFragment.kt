@@ -127,6 +127,7 @@ class MainFragment : Fragment() {
 
                     if (response != null) {
                         if (response.code == 200) {
+                            dialog.dismiss()
                             findNavController().navigate(R.id.action_mainFragment_to_registeredFragment)
                         } else {
                             // Assume everything else is an error

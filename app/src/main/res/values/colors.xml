@@ -7,4 +7,6 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="broccoli_me_green">#61A27A</color>
+    <color name="broccoli_me_green_secondary">#129900</color>
 </resources>

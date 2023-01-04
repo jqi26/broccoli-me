@@ -73,7 +73,7 @@ class MainFragment : Fragment() {
 
     private fun setUpButton() {
         val builder = AlertDialog.Builder(context).
-                setPositiveButton(getString(R.string.request), null)
+                setPositiveButton(getString(R.string.send), null)
 
         val form = layoutInflater.inflate(R.layout.dialog_details, null, false)
         builder.setView(form)

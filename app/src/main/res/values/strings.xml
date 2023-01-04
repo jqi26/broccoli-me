@@ -3,12 +3,12 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="broccoli_and_co"><![CDATA[Broccoli & Co.]]></string>
-    <string name="invite_description">Broccoli Me is the app for getting fresh broccoli shipped directly to your door step. Ready to get some Vitamin C in your life? Tap the button below to request an invitation to get updates when we have more to share.</string>
+    <string name="invite_description">Broccoli Me is the app for getting fresh broccoli shipped directly to your doorstep. Ready to get some Vitamin C in your life? Tap the button below to request an invitation to get updates when we have more to share.</string>
     <string name="request_an_invitation">Request an Invitation</string>
     <string name="email">Email</string>
     <string name="confirm_email">Confirm Email</string>
     <string name="email_icon">Email Icon</string>
-    <string name="name">Name</string>
+    <string name="name">Full Name</string>
     <string name="person_icon">Person Icon</string>
     <string name="your_details">Your Details</string>
     <string name="empty_name_warning">Name cannot be empty.</string>
@@ -21,16 +21,17 @@
     <string name="request">Request</string>
     <string name="cancel">Cancel</string>
     <string name="timeout_error">Connection to the server timed out. Please try again.</string>
-    <string name="registered_message"><![CDATA[You have successfully been registered to receive email updates from Broccoli & Co.. You can always unregister if you do not wish to receive emails from us anymore.]]></string>
+    <string name="registered_message"><![CDATA[You have successfully been registered to receive email updates from Broccoli & Co. You can always unregister if you do not wish to receive emails from us anymore.]]></string>
     <string name="congratulations">Congratulations!</string>
     <string name="broccoli_me_ok">OK</string>
     <string name="registered_background_gif">Registered Background Gif</string>
     <string name="has_registered">HAS_REGISTERED</string>
-    <string name="cancel_invitation_message">You have already sent an invite to receive email updates from us. If you do want to receive emails, tap the button below to cancel your invitation.</string>
+    <string name="cancel_invitation_message">You have already sent an invite to receive email updates from us. If you no longer want to receive emails, tap the button below to cancel your invitation.</string>
     <string name="cancel_invite">Cancel Invite</string>
     <string name="cancelled_message">Your invitation has successfully been cancelled, but you can send another invite at any time. Tap the button below to go back to the home screen.</string>
     <string name="successfully_cancelled">Successfully Cancelled</string>
     <string name="sad_to_go">We\'re sad to see you go!</string>
-    <string name="sure_to_cancel_invite">Are you sure you want to cancel your invite? You can always send another invitation later if you change your mind.</string>
+    <string name="sure_to_cancel_invite">Are you sure you want to cancel your invitation? You can always send another invitation later if you change your mind.</string>
     <string name="back">Back</string>
+    <string name="send">Send</string>
 </resources>
